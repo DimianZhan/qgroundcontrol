@@ -100,6 +100,22 @@ SOURCES += \
     libs/shapelib/safileio.c
 
 #
+# [REQUIRED] minizip/zlib library. Provides unzip support.
+WindowsBuild {
+    #NYI
+} else {
+    LIBS += -lz
+    INCLUDEPATH += libs/minizip
+    SOURCES += \
+        libs/minizip/ioapi.c \
+        libs/minizip/unzip.c
+}
+
+AndroidBuild {
+    DEFINES += IOAPI_NO_64
+}
+
+#
 # [REQUIRED] SDL dependency. Provides joystick/gamepad support.
 # The SDL is packaged with QGC for the Mac and Windows. Linux support requires installing the SDL
 # library (development libraries and static binaries).
