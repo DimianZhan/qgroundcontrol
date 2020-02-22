@@ -41,7 +41,6 @@ ApplicationWindow {
 
     property var                _rgPreventViewSwitch:       [ false ]
 
-
     readonly property real      _topBottomMargins:          ScreenTools.defaultFontPixelHeight * 0.5
     readonly property string    _mainToolbar:               QGroundControl.corePlugin.options.mainToolbarUrl
     readonly property string    _planToolbar:               QGroundControl.corePlugin.options.planToolbarUrl

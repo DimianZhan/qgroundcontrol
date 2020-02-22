@@ -66,6 +66,7 @@ public:
     Q_INVOKABLE void sendToVehicle(void);
     Q_INVOKABLE void loadFromFile(const QString& filename);
     Q_INVOKABLE void saveToCurrent();
+    Q_INVOKABLE void reloadFromCurrent();
     Q_INVOKABLE void saveToFile(const QString& filename);
     Q_INVOKABLE void saveToKml(const QString& filename);
     Q_INVOKABLE void removeAll(void);                       ///< Removes all from controller only, synce required to remove from vehicle
@@ -120,7 +121,9 @@ private slots:
 #endif
 
 private:
-    void _showPlanFromManagerVehicle(void);
+    void _showPlanFromManagerVehicle    (void);
+    void _loadFromFileWorker            (const QString& filename, bool sendToVehicle);
+
 
     MultiVehicleManager*    _multiVehicleMgr;
     Vehicle*                _controllerVehicle; ///< Offline controller vehicle

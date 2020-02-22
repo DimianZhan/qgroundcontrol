@@ -238,28 +238,6 @@ Item {
         }
     }
 
-    QGCButton {
-        id:                     uploadButton
-        anchors.rightMargin:    _margins
-        anchors.right:          parent.right
-        anchors.verticalCenter: parent.verticalCenter
-        text:                   _controllerDirty ? qsTr("Upload Required") : qsTr("Upload")
-        enabled:                !_controllerSyncInProgress
-        visible:                !_controllerOffline && !_controllerSyncInProgress && !uploadCompleteText.visible
-        primary:                _controllerDirty
-        onClicked:              _planMasterController.upload()
-
-        PropertyAnimation on opacity {
-            easing.type:    Easing.OutQuart
-            from:           0.5
-            to:             1
-            loops:          Animation.Infinite
-            running:        _controllerDirty && !_controllerSyncInProgress
-            alwaysRunToEnd: true
-            duration:       2000
-        }
-    }
-
     // Small mission download progress bar
     Rectangle {
         id:             progressBar

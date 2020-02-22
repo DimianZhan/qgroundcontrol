@@ -14,6 +14,7 @@ Rectangle {
     id:                 _root
     color:              qgcPal.globalTheme === QGCPalette.Light ? Qt.rgba(1,1,1,0.8) : Qt.rgba(0,0,0,0.75)
     anchors.fill:       parent
+
     /// Bottom single pixel divider
     Rectangle {
         anchors.left:   parent.left
@@ -35,8 +36,12 @@ Rectangle {
             logo:               true
             checked:            false
             onClicked: {
-                checked = false
-                mainWindow.showFlyView()
+                if (mainWindow.planMasterControllerPlan.dirty) {
+                    mainWindow.showMessageDialog(qsTr("Plan Modified"), qsTr("You must save your changes before flying."))
+                } else {
+                    checked = false
+                    mainWindow.showFlyView()
+                }
             }
         }
         Loader {

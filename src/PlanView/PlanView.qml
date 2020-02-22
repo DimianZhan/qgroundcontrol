@@ -206,17 +206,6 @@ Item {
             return true
         }
 
-        function upload() {
-            if (!checkReadyForSaveUpload(false /* save */)) {
-                return
-            }
-            if (activeVehicle && activeVehicle.armed && activeVehicle.flightMode === activeVehicle.missionFlightMode) {
-                mainWindow.showComponentDialog(activeMissionUploadDialogComponent, qsTr("Plan Upload"), mainWindow.showDialogDefaultWidth, StandardButton.Cancel)
-            } else {
-                sendToVehicle()
-            }
-        }
-
         function loadFromSelectedFile() {
             fileDialog.title =          qsTr("Select Plan File")
             fileDialog.planFiles =      true
@@ -954,6 +943,8 @@ Item {
         QGCViewMessage {
             message: qsTr("Are you sure you want to remove current plan and create a new plan? ")
             function accept() {
+                _planMasterController.removeAllFromVehicle()
+                _missionController.setCurrentPlanViewSeqNum(0, true)
                 createPlanRemoveAllPromptDialogPlanCreator.createPlan(createPlanRemoveAllPromptDialogMapCenter)
                 hideDialog()
             }
@@ -1100,7 +1091,7 @@ Item {
             SectionHeader {
                 id:                 storageSection
                 Layout.fillWidth:   true
-                text:               qsTr("Storage")
+                text:               qsTr("Save Plan")
             }
 
             GridLayout {
@@ -1108,17 +1099,6 @@ Item {
                 rowSpacing:         _margin
                 columnSpacing:      ScreenTools.defaultFontPixelWidth
                 visible:            storageSection.visible
-
-                /*QGCButton {
-                    text:               qsTr("New...")
-                    Layout.fillWidth:   true
-                    onClicked:  {
-                        dropPanel.hide()
-                        if (_planMasterController.containsItems) {
-                            mainWindow.showComponentDialog(removeAllPromptDialog, qsTr("New Plan"), mainWindow.showDialogDefaultWidth, StandardButton.Yes | StandardButton.No)
-                        }
-                    }
-                }*/
 
                 QGCButton {
                     text:               qsTr("Open...")
@@ -1161,6 +1141,17 @@ Item {
                 QGCButton {
                     Layout.columnSpan:  3
                     Layout.fillWidth:   true
+                    text:               qsTr("Discard Changes")
+                    enabled:            !_planMasterController.syncInProgress && _planMasterController.dirty
+                    onClicked: {
+                        dropPanel.hide()
+                        _planMasterController.reloadFromCurrent()
+                    }
+                }
+
+                QGCButton {
+                    Layout.columnSpan:  3
+                    Layout.fillWidth:   true
                     text:               qsTr("Save Mission Waypoints As KML...")
                     enabled:            !_planMasterController.syncInProgress && _visualItems.count > 1
                     onClicked: {
@@ -1171,56 +1162,6 @@ Item {
                         }
                         dropPanel.hide()
                         _planMasterController.saveKmlToSelectedFile()
-                    }
-                }
-            }
-
-            SectionHeader {
-                id:                 vehicleSection
-                Layout.fillWidth:   true
-                text:               qsTr("Vehicle")
-            }
-
-            RowLayout {
-                Layout.fillWidth:   true
-                spacing:            _margin
-                visible:            vehicleSection.visible
-
-                QGCButton {
-                    text:               qsTr("Upload")
-                    Layout.fillWidth:   true
-                    enabled:            !_planMasterController.offline && !_planMasterController.syncInProgress && _planMasterController.containsItems
-                    visible:            !QGroundControl.corePlugin.options.disableVehicleConnection
-                    onClicked: {
-                        dropPanel.hide()
-                        _planMasterController.upload()
-                    }
-                }
-
-                QGCButton {
-                    text:               qsTr("Download")
-                    Layout.fillWidth:   true
-                    enabled:            !_planMasterController.offline && !_planMasterController.syncInProgress
-                    visible:            !QGroundControl.corePlugin.options.disableVehicleConnection
-                    onClicked: {
-                        dropPanel.hide()
-                        if (_planMasterController.dirty) {
-                            mainWindow.showComponentDialog(syncLoadFromVehicleOverwrite, columnHolder._overwriteText, mainWindow.showDialogDefaultWidth, StandardButton.Yes | StandardButton.Cancel)
-                        } else {
-                            _planMasterController.loadFromVehicle()
-                        }
-                    }
-                }
-
-                QGCButton {
-                    text:               qsTr("Clear")
-                    Layout.fillWidth:   true
-                    Layout.columnSpan:  2
-                    enabled:            !_planMasterController.offline && !_planMasterController.syncInProgress
-                    visible:            !QGroundControl.corePlugin.options.disableVehicleConnection
-                    onClicked: {
-                        dropPanel.hide()
-                        mainWindow.showComponentDialog(clearVehicleMissionDialog, text, mainWindow.showDialogDefaultWidth, StandardButton.Yes | StandardButton.Cancel)
                     }
                 }
             }

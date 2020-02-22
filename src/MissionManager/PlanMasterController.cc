@@ -312,7 +312,7 @@ void PlanMasterController::sendToVehicle(void)
     }
 }
 
-void PlanMasterController::loadFromFile(const QString& filename)
+void PlanMasterController::_loadFromFileWorker(const QString& filename, bool sendToVehicle)
 {
     QString errorString;
     QString errorMessage = tr("Error loading Plan file (%1). %2").arg(filename).arg("%1");
@@ -392,9 +392,16 @@ void PlanMasterController::loadFromFile(const QString& filename)
     }
     emit currentPlanFileChanged();
 
-    if (!offline()) {
-        setDirty(true);
+    if (!offline() && sendToVehicle) {
+        this->sendToVehicle();
     }
+    setDirty(false);
+}
+
+
+void PlanMasterController::loadFromFile(const QString& filename)
+{
+    _loadFromFileWorker(filename, true /* sendToVehicle */);
 }
 
 QJsonDocument PlanMasterController::saveToJson()
@@ -419,12 +426,22 @@ QJsonDocument PlanMasterController::saveToJson()
     return QJsonDocument(planJson);
 }
 
-void
-PlanMasterController::saveToCurrent()
+void PlanMasterController::saveToCurrent()
 {
     if(!_currentPlanFile.isEmpty()) {
         saveToFile(_currentPlanFile);
     }
+}
+
+void PlanMasterController::reloadFromCurrent(void)
+{
+    if(_currentPlanFile.isEmpty()) {
+        loadFromVehicle();
+    } else {
+        // User modified plan after loaded from file. No need to update vehicle. It continues to be at original loaded Plan state.
+        _loadFromFileWorker(_currentPlanFile, false /* sendToVehicle */);
+    }
+    setDirty(false);
 }
 
 void PlanMasterController::saveToFile(const QString& filename)
@@ -453,10 +470,10 @@ void PlanMasterController::saveToFile(const QString& filename)
         }
     }
 
-    // Only clear dirty bit if we are offline
-    if (offline()) {
-        setDirty(false);
+    if (!offline()) {
+        sendToVehicle();
     }
+    setDirty(false);
 }
 
 void PlanMasterController::saveToKml(const QString& filename)
