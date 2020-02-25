@@ -36,7 +36,7 @@ Item {
     readonly property real  _margin:                    ScreenTools.defaultFontPixelHeight * 0.5
     readonly property real  _toolsMargin:               ScreenTools.defaultFontPixelWidth * 0.75
     readonly property real  _radius:                    ScreenTools.defaultFontPixelWidth  * 0.5
-    readonly property real  _rightPanelWidth:           Math.min(parent.width / 3, ScreenTools.defaultFontPixelWidth * 30)
+    readonly property real  _rightPanelWidth:           ScreenTools.defaultFontPixelWidth * 35
     readonly property var   _defaultVehicleCoordinate:  QtPositioning.coordinate(37.803784, -122.462276)
     readonly property bool  _waypointsOnlyMode:         QGroundControl.corePlugin.options.missionWaypointsOnly
 
@@ -936,7 +936,6 @@ Item {
         }
     }
 
-    property var createPlanRemoveAllPromptDialogMapCenter
     property var createPlanRemoveAllPromptDialogPlanCreator
     Component {
         id: createPlanRemoveAllPromptDialog
@@ -945,7 +944,7 @@ Item {
             function accept() {
                 _planMasterController.removeAllFromVehicle()
                 _missionController.setCurrentPlanViewSeqNum(0, true)
-                createPlanRemoveAllPromptDialogPlanCreator.createPlan(createPlanRemoveAllPromptDialogMapCenter)
+                createPlanRemoveAllPromptDialogPlanCreator.createPlan(mapCenter())
                 hideDialog()
             }
         }
@@ -1070,7 +1069,6 @@ Item {
                             preventStealing:    true
                             onClicked:          {
                                 if (_planMasterController.containsItems) {
-                                    createPlanRemoveAllPromptDialogMapCenter = _mapCenter()
                                     createPlanRemoveAllPromptDialogPlanCreator = object
                                     mainWindow.showComponentDialog(createPlanRemoveAllPromptDialog, qsTr("Create Plan"), mainWindow.showDialogDefaultWidth, StandardButton.Yes | StandardButton.No)
                                 } else {

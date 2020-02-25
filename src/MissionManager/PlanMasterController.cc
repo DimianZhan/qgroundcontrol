@@ -525,8 +525,6 @@ void PlanMasterController::removeAllFromVehicle(void)
             _rallyPointController.removeAllFromVehicle();
         }
         setDirty(false);
-    } else {
-        qWarning() << "PlanMasterController::removeAllFromVehicle called while offline";
     }
 }
 
