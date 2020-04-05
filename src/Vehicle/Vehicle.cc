@@ -4590,3 +4590,9 @@ VehicleEstimatorStatusFactGroup::VehicleEstimatorStatusFactGroup(QObject* parent
     _addFact(&_horizPosAccuracyFact,            _horizPosAccuracyFactName);
     _addFact(&_vertPosAccuracyFact,             _vertPosAccuracyFactName);
 }
+
+void Vehicle::doGimbal(double pitch, double yaw)
+{
+    qDebug() << "DoGimbal" << pitch << yaw;
+    sendMavCommand(0, MAV_CMD_DO_MOUNT_CONTROL, true, pitch, 0, yaw, 0, 0, 0, MAV_MOUNT_MODE_MAVLINK_TARGETING);
+}

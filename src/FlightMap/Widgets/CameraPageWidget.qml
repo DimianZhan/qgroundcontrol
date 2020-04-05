@@ -56,6 +56,20 @@ Column {
         mainWindow.showComponentDialog(cameraSettings, _cameraVideoMode ? qsTr("Video Settings") : qsTr("Camera Settings"), 70, StandardButton.Ok)
     }
 
+    QGCTextField {
+        id: pitch
+    }
+    QGCTextField {
+        id: yaw
+    }
+
+    QGCButton {
+        anchors.horizontalCenter:   parent.horizontalCenter
+        text:                       qsTr("Gimbal")
+        onClicked:                  activeVehicle.doGimbal(pitch.text, yaw.text)
+        enabled:                    activeVehicle
+    }
+
     //-- Dumb camera trigger if no actual camera interface exists
     QGCButton {
         anchors.horizontalCenter:   parent.horizontalCenter
